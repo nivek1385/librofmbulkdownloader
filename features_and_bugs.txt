@@ -1,0 +1,9 @@
+Future Features:
+-Request specific file formats only
+-Request certain pages of user's library only
+-Request certain books only
+-Overwrite or not options
+-Update file name with titles\authors\narrators
+
+Known Bugs:
+-Sometimes the file extension is doubled (e.g., .zip.zip)

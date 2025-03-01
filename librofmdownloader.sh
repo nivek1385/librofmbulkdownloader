@@ -1,14 +1,7 @@
 #!/bin/bash
 #This script is to download libro.fm audiobooks in bulk.
 #Author: Kevin Hartley
-#Version: 2025-03-01 1448
-#Future Features:
-#-Command-line updates
-#-Request specific file formats only
-#-Request certain pages only
-#-Request certain books only
-#-Overwrite or not options
-#-Update file name with titles\authors\narrators
+#Version: 2025-03-01 1452
 
 #Defaults:
 verbosity=6 #Update once script has been tested thoroughly
