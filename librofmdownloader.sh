@@ -1,7 +1,7 @@
 #!/bin/bash
 #This script is to download libro.fm audiobooks in bulk.
 #Author: Kevin Hartley
-#Version: 2025-03-01 1452
+#Version: 2025-03-01 1507
 
 #Defaults:
 verbosity=6 #Update once script has been tested thoroughly
@@ -76,9 +76,9 @@ shopt -u extglob
 getPages() {
   outdebug "Starting getPages..."
   wget "$baseurl" --header "Cookie: _store_session=$session" -O index.html || outcrit "Unable to wget index.html to find max pages."
+  add_to_cleanup index.html || outwarn "Unable to add index.html to the files to clean array."
   outdebug "Processing index.html to find max pages..."
   maxpages=$(grep "user/library?page=" index.html | tail -1 | sed 's/.*page=//' | sed 's/".*//')
-  rm index.html || outwarn "Unable to remove index.html, please remove manually."
   outdebug "Exiting getPages function."
 } #getPages
 
@@ -90,8 +90,9 @@ processPage() {
   #one argument for page number
   outdebug "Starting processPage function for page number $1..."
   wget "$baseurl?page=$1" --header "Cookie: _store_session=$session" -O page.html || outcrit "Unable to wget page $1 from the user's library."
+  add_to_cleanup page.html || outwarn "Unable to add page.html to the files to clean array."
   grep "download?file" page.html > page.txt || outcrit "Unable to grep page.html for the download links."
-  rm page.html || outwarn "Unable to remove page.html, please remove manually."
+  add_to_cleanup page.txt || outwarn "Unable to add page.txt to the files to clean array."
   sed -i 's/.*href="//g' page.txt || outcrit "Unable to perform sed commands to strip download link prefixes."
   sed -i 's/".*//' page.txt || outcrit "Unable to perform sed commands to strip download link suffixes."
 
