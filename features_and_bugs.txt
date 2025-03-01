@@ -6,5 +6,5 @@ Future Features:
 
 Known Bugs:
 -Sometimes the file extension is doubled (e.g., .zip.zip)
--Requesting certain books attempts to download 5 files rather than detecting how many files actually exist. It also assumes zip files unless the format is also specified prior on the commandline (order matters).
--Requesting specific file format only works if also specifying specific books and only if the format is specified prior to the ISBN on the commandline (order matters).
+-Requesting certain books attempts to download 5 files rather than detecting how many files actually exist. It assumes zip for the format unless otherwise specified on the command line via the format option.
+-Requesting specific file format only works if also specifying a specific book.

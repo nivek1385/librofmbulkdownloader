@@ -1,7 +1,7 @@
 #!/bin/bash
 #This script is to download libro.fm audiobooks in bulk.
 #Author: Kevin Hartley
-#Version: 2025-03-01 1534
+#Version: 2025-03-01 1618
 
 #Defaults:
 verbosity=6 #Update once script has been tested thoroughly
@@ -15,6 +15,7 @@ fileext=zip
 overwrite=false
 minpage=1
 maxpages=1
+singlebook=false
 
 #Select and source library functions
 librarydir=/usr/local/bin
@@ -28,6 +29,10 @@ logUsage "$*" || outerror "Unable to log script usage."
 
 Main() {
   outdebug "Starting main function."
+  if $singlebook; then
+    downloadBook
+    Exit
+  fi
   getPages || outcrit "Unable to run getPages function."
   for page in $(seq $minpage $maxpages); do
     processPage $page || outcrit "Unable to run processPage function for page $page."
@@ -73,12 +78,13 @@ while [ $# -ge 0 ]; do
       verbosity=${1: -1}
       ;;
     "--format"|"--Format"|"-f")
-      fileext=$1
+      fileext=$2
       shift
       ;;
     "--isbn"|"--ISBN"|"-i")
-      isbn=$1
-      downloadBook
+      isbn=$2
+      singlebook=true
+      #downloadBook
       shift
       ;;
     "--nooverwrite"|"-n")
@@ -88,8 +94,8 @@ while [ $# -ge 0 ]; do
       overwrite=true
       ;;
     "--page"|"-p")
-      minpage=$1
-      maxpages=$1
+      minpage=$2
+      maxpages=$2
       shift
       ;;
     *)
