@@ -1,7 +1,7 @@
 #!/bin/bash
 #This script is to download libro.fm audiobooks in bulk.
 #Author: Kevin Hartley
-#Version: 2025-03-01 1507
+#Version: 2025-03-01 1534
 
 #Defaults:
 verbosity=6 #Update once script has been tested thoroughly
@@ -10,9 +10,11 @@ session="$(cat .sessionkey)"
 isbn=9781508253631
 filenum=0
 baseurl="https://libro.fm/user/library/"
-dlurl="/download?file_type=zip&file="
 outputpath=.
 fileext=zip
+overwrite=false
+minpage=1
+maxpages=1
 
 #Select and source library functions
 librarydir=/usr/local/bin
@@ -27,7 +29,7 @@ logUsage "$*" || outerror "Unable to log script usage."
 Main() {
   outdebug "Starting main function."
   getPages || outcrit "Unable to run getPages function."
-  for page in $(seq 1 $maxpages); do
+  for page in $(seq $minpage $maxpages); do
     processPage $page || outcrit "Unable to run processPage function for page $page."
   done
 } #Main
@@ -39,6 +41,11 @@ Help() {
   echo "Available Options:"
   echo "--Help\-h\-?     - Display this help information."
   echo "-v(vvvv)\v[0-6]  - Increase verbosity level for each v or set explicitly to level."
+  echo "--format\-f      - Specify format to download (e.g., zip)."
+  echo "--isbn\-i        - Specify specific ISBN of book to download."
+  echo "--page\-p        - Specify specific page of user library to download."
+  echo "--nooverwrite\-n - Specify that books should not be redownloaded and overwrite existing files."
+  echo "--overwrite\-o   - Specify that books  should be redownloaded and overwrite existing files."
   echo ""
   echo "Available Subsets:"
   echo ""
@@ -65,6 +72,26 @@ while [ $# -ge 0 ]; do
       # shellcheck disable=SC2034
       verbosity=${1: -1}
       ;;
+    "--format"|"--Format"|"-f")
+      fileext=$1
+      shift
+      ;;
+    "--isbn"|"--ISBN"|"-i")
+      isbn=$1
+      downloadBook
+      shift
+      ;;
+    "--nooverwrite"|"-n")
+      overwrite=false
+      ;;
+    "--overwrite"|"-o")
+      overwrite=true
+      ;;
+    "--page"|"-p")
+      minpage=$1
+      maxpages=$1
+      shift
+      ;;
     *)
       outcrit "Unhandled commandline option. Please use \"Help\" option for detailed syntax and options."
       ;;
@@ -83,7 +110,9 @@ getPages() {
 } #getPages
 
 downloadBook() {
+  for filenum in $(seq 0 4); do
     wget "$baseurl$isbn/download?file_type=$fileext&file=$filenum" --header "Cookie: _store_session=$session" -O "$outputpath/$isbn-part-$filenum.$fileext"
+  done
 } #downloadBook
 
 processPage() {

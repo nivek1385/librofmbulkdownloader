@@ -1,9 +1,10 @@
 Future Features:
 -Request specific file formats only
--Request certain pages of user's library only
 -Request certain books only
 -Overwrite or not options
 -Update file name with titles\authors\narrators
 
 Known Bugs:
 -Sometimes the file extension is doubled (e.g., .zip.zip)
+-Requesting certain books attempts to download 5 files rather than detecting how many files actually exist. It also assumes zip files unless the format is also specified prior on the commandline (order matters).
+-Requesting specific file format only works if also specifying specific books and only if the format is specified prior to the ISBN on the commandline (order matters).
